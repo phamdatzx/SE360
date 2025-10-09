@@ -2,8 +2,10 @@ package controller
 
 import (
 	"net/http"
+	"user-service/dto"
 	"user-service/model"
 	"user-service/service"
+	"user-service/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,5 +31,22 @@ func (c *UserController) Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, resultUser)
+	utils.SuccessResponse(ctx, 200, "Register success", resultUser)
+}
+
+func (c *UserController) Login(ctx *gin.Context) {
+	var request dto.LoginRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	response, err := c.service.Login(request)
+	if err != nil {
+		_ = ctx.Error(err)
+		ctx.Abort()
+		return
+	}
+
+	utils.SuccessResponse(ctx, 200, "Login successfully", response)
+
 }
