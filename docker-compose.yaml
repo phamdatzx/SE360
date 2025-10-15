@@ -1,0 +1,34 @@
+version: '3.9'  # Phiên bản compose schema
+
+services:       # Nơi khai báo các container
+  user-service:          # Tên service (container)
+    build: ./services/user-service    # Build image từ Dockerfile trong thư mục hiện tại
+    ports:
+      - "8080:8080"
+    env_file:
+      ./services/user-service/.env
+    depends_on:
+      - db       # Chạy sau khi db khởi động
+    networks:
+      - app-network
+
+  db:
+    image: postgres:17.5-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=postgres
+    volumes:
+      - se360_db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  se360_db_data:      # Khai báo volume để lưu dữ liệu

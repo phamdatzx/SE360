@@ -56,5 +56,4 @@ func (s *userService) Login(request dto.LoginRequest) (dto.LoginResponse, error)
 	} else { //incorrect info
 		return dto.LoginResponse{}, customError.NewAppError(401, "incorrect password")
 	}
-
 }

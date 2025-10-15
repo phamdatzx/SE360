@@ -3,7 +3,6 @@ package main
 import (
 	"user-service/config"
 	"user-service/controller"
-	"user-service/initializer"
 	"user-service/model"
 	"user-service/repository"
 	"user-service/router"
@@ -11,8 +10,6 @@ import (
 )
 
 func main() {
-	initializer.LoadEnv()
-
 	// Kết nối DB
 	config.ConnectDatabase()
 
