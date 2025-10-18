@@ -10,6 +10,8 @@ import (
 )
 
 func main() {
+	//
+
 	// Kết nối DB
 	config.ConnectDatabase()
 

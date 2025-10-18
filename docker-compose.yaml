@@ -12,23 +12,6 @@ services:       # Nơi khai báo các container
     networks:
       - app-network
 
-  db:
-    image: postgres:17.5-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123456
-      - POSTGRES_DB=postgres
-    volumes:
-      - se360_db_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - app-network
-
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  se360_db_data:      # Khai báo volume để lưu dữ liệu
