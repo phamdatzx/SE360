@@ -57,3 +57,5 @@ func (s *userService) Login(request dto.LoginRequest) (dto.LoginResponse, error)
 		return dto.LoginResponse{}, customError.NewAppError(401, "incorrect password")
 	}
 }
+
+func (s *userService) VerifyToken(token string) {}

@@ -2,7 +2,9 @@ package controller
 
 import (
 	"net/http"
+	"strings"
 	"user-service/dto"
+	appError "user-service/error"
 	"user-service/model"
 	"user-service/service"
 	"user-service/utils"
@@ -49,4 +51,36 @@ func (c *UserController) Login(ctx *gin.Context) {
 
 	utils.SuccessResponse(ctx, 200, "Login successfully", response)
 
+}
+
+func (c *UserController) Verify(ctx *gin.Context) {
+	//get auth header
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		ctx.Error(appError.NewAppError(401, "Authorization header not provided"))
+		ctx.Abort()
+		return
+	}
+
+	//remove "Bearer" prefix
+	parts := strings.SplitN(authHeader, " ", 2)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+		ctx.Error(appError.NewAppError(401, "Invalid Authorization header format"))
+		ctx.Abort()
+		return
+	}
+	token := parts[1]
+
+	claims, err := utils.VerifyToken(token)
+	if err != nil {
+		ctx.Error(appError.NewAppErrorWithErr(401, "Invalid token", err))
+		ctx.Abort()
+		return
+	}
+
+	// Trả header để Traefik forward sang backend
+	ctx.Header("X-User-Id", claims.UserID)
+	ctx.Header("X-User-Role", claims.Role)
+
+	utils.SuccessResponse(ctx, 200, "Verify successfully", nil)
 }
