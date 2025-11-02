@@ -80,6 +80,7 @@ func (c *UserController) Verify(ctx *gin.Context) {
 
 	// Trả header để Traefik forward sang backend
 	ctx.Header("X-User-Id", claims.UserID)
+	ctx.Header("X-Username", claims.Username)
 	ctx.Header("X-User-Role", claims.Role)
 
 	utils.SuccessResponse(ctx, 200, "Verify successfully", nil)

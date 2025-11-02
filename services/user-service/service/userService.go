@@ -32,9 +32,10 @@ func (s *userService) RegisterUser(user model.User) (dto.UserResponse, error) {
 
 	//hash password
 	user.Password, _ = utils.HashPassword(user.Password)
+	user.Role = "USER"
 	err = s.repo.CreateUser(&user)
 	//map to dto
-	resultDto := dto.UserResponse{user.ID, user.UserName, user.Name}
+	resultDto := dto.UserResponse{user.ID.String(), user.UserName, user.Name}
 
 	return resultDto, err
 }
@@ -43,12 +44,12 @@ func (s *userService) Login(request dto.LoginRequest) (dto.LoginResponse, error)
 	//get user model
 	user, err := s.repo.GetUserByUsername(request.Username)
 	if err != nil {
-		return dto.LoginResponse{}, err
+		return dto.LoginResponse{}, customError.NewAppErrorWithErr(401, "username not found", err)
 	}
 
 	//check password
 	if utils.CheckPasswordHash(request.Password, user.Password) { //correct info
-		token, err := utils.GenerateToken(user.UserName)
+		token, err := utils.GenerateToken(user.ID.String(), user.UserName, user.Role)
 		if err != nil {
 			return dto.LoginResponse{}, err
 		}
@@ -57,5 +58,3 @@ func (s *userService) Login(request dto.LoginRequest) (dto.LoginResponse, error)
 		return dto.LoginResponse{}, customError.NewAppError(401, "incorrect password")
 	}
 }
-
-func (s *userService) VerifyToken(token string) {}

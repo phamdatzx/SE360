@@ -1,0 +1,9 @@
+http:
+  middlewares:
+    auth-forward:
+      forwardAuth:
+        address: "http://user-service.default.svc.cluster.local:8080/api/user/verify"
+        trustForwardHeader: true
+        authResponseHeaders:
+          - "X-User-ID"
+          - "X-User-Role"

@@ -1,0 +1,20 @@
+# values.yaml
+
+service:
+  type: LoadBalancer
+
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+
+# ⚙️ Bổ sung dynamic config provider (file)
+additionalArguments:
+  - "--providers.file.filename=/dynamic-conf/middlewares.yaml"
+  - "--providers.file.watch=true"
+
+# Mount file middlewares.yaml vào container
+volumes:
+  - name: dynamic-conf
+    mountPath: /dynamic-conf
+    type: configMap
+    configMapName: traefik-dynamic-conf

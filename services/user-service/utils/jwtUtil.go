@@ -16,9 +16,11 @@ type CustomClaims struct {
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET")) // nên đặt trong ENV
 
-func GenerateToken(username string) (string, error) {
+func GenerateToken(userId string, username string, role string) (string, error) {
 	claims := jwt.MapClaims{
+		"userId":   userId,
 		"username": username,
+		"role":     role,
 		"exp":      time.Now().Add(time.Hour * 24).Unix(), // hết hạn sau 24h
 		"iat":      time.Now().Unix(),
 	}

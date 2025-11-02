@@ -27,5 +27,10 @@ func SetupRouter(appRouter *AppRouter) *gin.Engine {
 		RegisterUserRoutes(api, *appRouter.UserController)
 	}
 
+	//publicApi := engine.Group("/api/public")
+	//{
+	//	RegisterPublicUserRoutes(publicApi, *appRouter.UserController)
+	//}
+
 	return engine
 }
