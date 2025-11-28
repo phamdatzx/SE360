@@ -19,7 +19,7 @@ spec:
       containers:
         - name: {{.Values.appName}}
           image: "{{.Values.image}}:{{.Values.tag}}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: {{.Values.containerPort}}
               name: http
@@ -55,6 +55,30 @@ spec:
                 secretKeyRef:
                   name: {{.Values.appName}}-secret
                   key: DB_NAME
-
+            - name: EMAIL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{.Values.appName}}-secret
+                  key: EMAIL_HOST
+            - name: EMAIL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{.Values.appName}}-secret
+                  key: EMAIL_PORT
+            - name: EMAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{.Values.appName}}-secret
+                  key: EMAIL_USERNAME
+            - name: EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{.Values.appName}}-secret
+                  key: EMAIL_PASSWORD
+            - name: CLIENT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{.Values.appName}}-secret
+                  key: CLIENT_URL
 
 

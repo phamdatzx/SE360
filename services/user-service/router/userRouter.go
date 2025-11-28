@@ -9,8 +9,12 @@ import (
 func RegisterUserRoutes(rg *gin.RouterGroup, c controller.UserController) {
 	user := rg.Group("")
 	{
-		user.POST("/register", c.Register)
-		user.POST("/login", c.Login)
-		user.POST("/verify", c.Verify)
+		user.POST("/public/register", c.Register)
+		user.POST("/public/login", c.Login)
+		user.GET("/public/verify", c.Verify)
+		user.POST("/public/activate", c.ActivateAccount)
+		user.POST("/public/send-reset-password", c.SendResetPasswordRequest)
+		user.POST("/public/reset-password", c.ResetPassword)
+		user.GET("/test-private", c.TestPrivate)
 	}
 }

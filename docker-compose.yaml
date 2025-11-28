@@ -1,16 +1,81 @@
-version: '3.9'  # Phiên bản compose schema
+version: "3.9"
 
-services:       # Nơi khai báo các container
-  user-service:          # Tên service (container)
-    build: ./services/user-service    # Build image từ Dockerfile trong thư mục hiện tại
+services:
+  # Traefik reverse proxy
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    command:
+      # Enable Docker provider
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      # Enable API and Dashboard
+      - "--api.dashboard=true"
+      - "--api.insecure=true" # For local testing only
+      # Define entrypoints
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Logging
+      - "--log.level=INFO"
+      - "--accesslog=true"
     ports:
-      - "8080:8080"
-    env_file:
-      ./services/user-service/.env
-    depends_on:
-      - db       # Chạy sau khi db khởi động
+      - "81:80" # HTTP
+      - "443:443" # HTTPS
+      - "8081:8080" # Traefik Dashboard
+    volumes:
+      # Mount Docker socket to read container labels
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - app-network
+    labels:
+      - "traefik.enable=true"
+      # Dashboard routing
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      - "traefik.http.routers.dashboard.service=api@internal"
+    restart: unless-stopped
+
+  # User service
+  user-service:
+    build: ./services/user-service
+    container_name: user-service
+    env_file:
+      - ./services/user-service/.env
+    networks:
+      - app-network
+    labels:
+      - "traefik.enable=true"
+
+      # CORS Middleware - matches Kubernetes configuration
+      - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,PATCH,OPTIONS"
+      - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowheaders=Content-Type,Authorization,X-Requested-With,Accept,Origin,X-User-Id,X-User-Role,X-Username"
+      - "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=http://localhost:3000,http://localhost:8080,http://localhost:5173"
+      - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowcredentials=true"
+      - "traefik.http.middlewares.cors-headers.headers.accesscontrolexposeheaders=X-User-Id,X-User-Role,X-Username"
+      - "traefik.http.middlewares.cors-headers.headers.accesscontrolmaxage=3600"
+      - "traefik.http.middlewares.cors-headers.headers.addvaryheader=true"
+
+      # Public routes - CORS only
+      - "traefik.http.routers.user-service-public.rule=PathPrefix(`/api/user/public`)"
+      - "traefik.http.routers.user-service-public.entrypoints=web"
+      - "traefik.http.routers.user-service-public.service=user-service"
+      - "traefik.http.routers.user-service-public.middlewares=cors-headers"
+      - "traefik.http.routers.user-service-public.priority=100"
+
+      # Private routes - CORS + Authentication (CORS first, then auth)
+      - "traefik.http.routers.user-service-private.rule=PathPrefix(`/api/user`)"
+      - "traefik.http.routers.user-service-private.entrypoints=web"
+      - "traefik.http.routers.user-service-private.service=user-service"
+      - "traefik.http.routers.user-service-private.middlewares=cors-headers,forward-auth"
+      - "traefik.http.routers.user-service-private.priority=90"
+
+      # Forward Auth Middleware
+      - "traefik.http.middlewares.forward-auth.forwardauth.address=http://user-service:8080/api/user/public/verify"
+      - "traefik.http.middlewares.forward-auth.forwardauth.trustForwardHeader=true"
+      - "traefik.http.middlewares.forward-auth.forwardauth.authResponseHeaders=X-User-Id,X-User-Role,X-Username"
+
+      # Service definition
+      - "traefik.http.services.user-service.loadbalancer.server.port=8080"
+    restart: unless-stopped
 
 networks:
   app-network:

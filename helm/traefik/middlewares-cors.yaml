@@ -1,0 +1,38 @@
+# helm/traefik/middlewares-cors.yaml
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: cors-headers
+  namespace: default  # adjust to match your application namespace
+spec:
+  headers:
+    accessControlAllowMethods:
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "DELETE"
+      - "PATCH"
+      - "OPTIONS"
+    accessControlAllowHeaders:
+      - "Content-Type"
+      - "Authorization"
+      - "X-Requested-With"
+      - "Accept"
+      - "Origin"
+      - "X-User-Id"
+      - "X-User-Role"
+      - "X-Username"
+    accessControlAllowOriginList:
+      - "http://localhost:3000"
+      - "http://localhost:8080"
+      - "http://localhost:5173"
+      # Add your frontend domains here
+      # - "https://yourdomain.com"
+      # - "https://www.yourdomain.com"
+    accessControlAllowCredentials: true
+    accessControlExposeHeaders:
+      - "X-User-Id"
+      - "X-User-Role"
+      - "X-Username"
+    accessControlMaxAge: 3600
+    addVaryHeader: true

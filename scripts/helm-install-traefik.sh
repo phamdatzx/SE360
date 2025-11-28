@@ -1,5 +1,7 @@
 #!/bin/bash
 
-kubectl create configmap traefik-dynamic-conf  --from-file=middlewares.yaml= ./helm/traefik/middlewares.yaml
+helm install traefik traefik/traefik -f helm/traefik/values.yaml
 
-helm install traefik traefik/traefik -f ./helm/traefik/values.yaml
+kubectl apply -f helm/traefik/middlewares-auth.yaml
+
+kubectl apply -f helm/traefik/middlewares-cors.yaml

@@ -1,0 +1,73 @@
+# ------------------------------
+# Go / Gin .gitignore
+# ------------------------------
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Build output
+/bin/
+/build/
+/dist/
+/out/
+/tmp/
+
+# Go coverage files
+*.out
+*.cover
+coverage/
+
+# Dependency directories (if using go mod vendor)
+vendor/
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Logs
+*.log
+logs/
+log/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.iml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.swp
+*.swo
+*.tmp
+*~
+.cache/
+*.bak
+
+# Gin specific (if you store uploads or temp files)
+uploads/
+static/uploads/
+tmp/
+
+# Docker
+docker-compose.override.yml
+*.pid
+
+# Node (if you serve frontend assets)
+node_modules/
+npm-debug.log
+yarn-error.log

@@ -13,8 +13,7 @@ type AppRouter struct {
 }
 
 // SetupRouter builds the main Gin router and registers all module routes
-func SetupRouter(appRouter *AppRouter) *gin.Engine {
-	engine := gin.Default()
+func SetupRouter(engine *gin.Engine, appRouter *AppRouter) *gin.Engine {
 
 	// Global middlewares
 	engine.Use(

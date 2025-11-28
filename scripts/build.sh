@@ -8,7 +8,7 @@ set -e
 
 # Cấu hình cơ bản
 DOCKER_USERNAME="megumikatou"          # ← đổi thành username Docker Hub của bạn
-VERSION="v1.0.0"                     # ← hoặc dùng $(date +%Y%m%d) để tạo version theo ngày
+VERSION="v1.0.1"                     # ← hoặc dùng $(date +%Y%m%d) để tạo version theo ngày
 SERVICES=("user-service")  # Danh sách các service
 
 ## Đăng nhập Docker Hub (yêu cầu bạn đã có token hoặc sẵn sàng nhập password)
