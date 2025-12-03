@@ -34,7 +34,6 @@ services:
       - "traefik.http.routers.dashboard.service=api@internal"
     restart: unless-stopped
 
-  # User service
   user-service:
     build: ./services/user-service
     container_name: user-service
@@ -77,6 +76,73 @@ services:
       - "traefik.http.services.user-service.loadbalancer.server.port=8080"
     restart: unless-stopped
 
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: driver_service_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Driver service
+  driver-service:
+    build: ./services/driver-service
+    container_name: driver-service
+    env_file:
+      - ./services/driver-service/.env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    labels:
+      - "traefik.enable=true"
+
+      # Driver service routes - CORS enabled
+      - "traefik.http.routers.driver-service.rule=PathPrefix(`/api/driver`)"
+      - "traefik.http.routers.driver-service.entrypoints=web"
+      - "traefik.http.routers.driver-service.service=driver-service"
+      - "traefik.http.routers.driver-service.middlewares=cors-headers"
+      - "traefik.http.routers.driver-service.priority=95"
+
+      # Service definition
+      - "traefik.http.services.driver-service.loadbalancer.server.port=8082"
+    restart: unless-stopped
+
+  # Trip service
+  trip-service:
+    build: ./services/trip-service
+    container_name: trip-service
+    env_file:
+      - ./services/trip-service/.env
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    labels:
+      - "traefik.enable=true"
+
+      # Trip service routes - CORS enabled
+      - "traefik.http.routers.trip-service.rule=PathPrefix(`/api/trip`)"
+      - "traefik.http.routers.trip-service.entrypoints=web"
+      - "traefik.http.routers.trip-service.service=trip-service"
+      - "traefik.http.routers.trip-service.middlewares=cors-headers"
+      - "traefik.http.routers.trip-service.priority=94"
+
+      # Service definition
+      - "traefik.http.services.trip-service.loadbalancer.server.port=8083"
+    restart: unless-stopped
+
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgres-data:

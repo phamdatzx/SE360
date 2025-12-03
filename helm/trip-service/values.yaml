@@ -1,0 +1,9 @@
+appName: trip-service
+replicas: 3
+image: megumikatou/trip-service
+tag: latest
+containerPort: 8083
+
+service:
+  type: ClusterIP
+  port: 8083

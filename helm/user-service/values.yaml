@@ -1,5 +1,5 @@
 appName: user-service
-replicas: 1
+replicas: 3
 image: megumikatou/user-service
 tag: latest
 containerPort: 8080

@@ -18,13 +18,13 @@ func ConnectDatabase() {
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 
-	// Kiểm tra nếu thiếu thông tin nào đó
+	// Check if any required environment variable is missing
 	if host == "" || port == "" || user == "" || password == "" || dbname == "" {
 		fmt.Println("Missing environment database information (DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME)")
 		return
 	}
 
-	// DSN cho PostgreSQL
+	// DSN for PostgreSQL
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
 		host, user, password, dbname, port)
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{

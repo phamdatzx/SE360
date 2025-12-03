@@ -1,0 +1,9 @@
+appName: driver-service
+replicas: 3
+image: megumikatou/driver-service
+tag: latest
+containerPort: 8082
+
+service:
+  type: ClusterIP
+  port: 8082

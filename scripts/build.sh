@@ -9,7 +9,7 @@ set -e
 # Cấu hình cơ bản
 DOCKER_USERNAME="megumikatou"          # ← đổi thành username Docker Hub của bạn
 VERSION="v1.0.1"                     # ← hoặc dùng $(date +%Y%m%d) để tạo version theo ngày
-SERVICES=("user-service")  # Danh sách các service
+SERVICES=("user-service" "driver-service" "trip-service")  # Danh sách các service
 
 ## Đăng nhập Docker Hub (yêu cầu bạn đã có token hoặc sẵn sàng nhập password)
 #echo "🔐 Logging in to Docker Hub..."
@@ -19,7 +19,7 @@ SERVICES=("user-service")  # Danh sách các service
 for SERVICE in "${SERVICES[@]}"
 do
   echo "🚧 Building image for $SERVICE ..."
-  docker build -t "$DOCKER_USERNAME/$SERVICE:$VERSION" "../services/$SERVICE"
+  docker build -t "$DOCKER_USERNAME/$SERVICE:$VERSION" "services/$SERVICE"
 
   echo "🏷️ Tagging latest version ..."
   docker tag "$DOCKER_USERNAME/$SERVICE:$VERSION" "$DOCKER_USERNAME/$SERVICE:latest"

@@ -1,0 +1,51 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: se-360-vpc
+  region: ap-southeast-1
+
+# Sử dụng VPC có sẵn
+vpc:
+  id: vpc-0bafab0a6ac022e23
+  clusterEndpoints:
+    publicAccess: true
+    privateAccess: true
+  subnets:
+    public:
+      # 3 public subnet cho Traefik/ALB
+      public-subnet-1:
+        id: subnet-0e3c4f8b45c7107a3
+      public-subnet-2:
+        id: subnet-0e5863aee52b7157e
+      public-subnet-3:
+        id: subnet-0617a8c868edfcbe7
+    private:
+      # 3 private subnet cho NodeGroup
+      private-subnet-1:
+        id: subnet-0889db369bf7a3541
+      private-subnet-2:
+        id: subnet-04ade61690e86c5a4
+      private-subnet-3:
+        id: subnet-0aed9cc5546e47cae
+
+# IAM OIDC cho ALB/NLB controller
+iam:
+  withOIDC: true
+
+# NodeGroup chạy trong private subnet
+nodeGroups:
+  - name: ng-main-new
+    instanceType: t3.medium
+    desiredCapacity: 3
+    minSize: 3
+    maxSize: 6
+    privateNetworking: true
+    availabilityZones:
+      - ap-southeast-1a
+      - ap-southeast-1b
+      - ap-southeast-1c
+
+# chú thích:
+# - NodeGroup trong private subnet
+# - LoadBalancer (NLB/ALB) trong public subnet

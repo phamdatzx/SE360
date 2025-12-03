@@ -20,6 +20,14 @@ func SetupRouter(engine *gin.Engine, appRouter *AppRouter) *gin.Engine {
 		middleware.ErrorHandler(),
 	)
 
+	// Health check endpoint
+	engine.GET("/api/user/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":  "healthy",
+			"service": "user-service",
+		})
+	})
+
 	api := engine.Group("/api/user")
 	{
 		// Each controller registers its own routes
@@ -33,3 +41,4 @@ func SetupRouter(engine *gin.Engine, appRouter *AppRouter) *gin.Engine {
 
 	return engine
 }
+

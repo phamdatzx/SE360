@@ -1,58 +1,88 @@
-# Số lượng replicas
+# -------------------------------
+# 1️⃣ Deployment
+# -------------------------------
 deployment:
-  replicas: 1
+  replicas: 3  # tăng lên 3 để trải across AZ
+  podAnnotations: {}
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: traefik
+          topologyKey: "kubernetes.io/hostname"
 
-# Service expose Traefik
+# -------------------------------
+# 2️⃣ Service LoadBalancer
+# -------------------------------
 service:
   type: LoadBalancer
+  externalTrafficPolicy: Local  # preserve client IP
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-internal: "false"  # public NLB
   ports:
     web:
       port: 80
     websecure:
       port: 443
 
-# Providers
+# -------------------------------
+# 3️⃣ Providers
+# -------------------------------
 providers:
   kubernetesCRD:
     enabled: true
   kubernetesIngress:
     enabled: true
 
-# Bật Dashboard
+# -------------------------------
+# 4️⃣ Dashboard
+# -------------------------------
 dashboard:
   enabled: true
-  domain: "traefik.local"   # domain bạn muốn dùng
-
-# EntryPoints
+  domain: "www.phamdatzx.id.vn"  # domain thực tế
+  auth:
+    basic:
+      users:
+        - "admin:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"  # admin / password example (htpasswd format)
+  # EntryPoint mặc định là websecure (443)
 entryPoints:
   web:
     address: ":80"
   websecure:
     address: ":443"
 
-# Logs
-logs:
-  general:
-    level: INFO
-  access:
-    enabled: true
-
-# Tham số bổ sung
-additionalArguments:
-  - "--api.dashboard=true"
-
-# CRDs — rất quan trọng! Bật để Helm tự cài
-crds:
-  enabled: true
-
-# Optional: RBAC nên để bật
-rbac:
-  enabled: true
-
-# Expose Dashboard qua IngressRoute tự động
+# Expose Dashboard qua IngressRoute
 ingressRoute:
   dashboard:
     enabled: true
-    # domain của dashboard (phải match với /etc/hosts)
-    matchRule: Host(`traefik.local`)
+    matchRule: Host(`www.phamdatzx.id.vn`)
     entryPoints: ["web"]
+
+
+# -------------------------------
+# 5️⃣ Logs
+# -------------------------------
+logs:
+  general:
+    level: INFO
+    access:
+    enabled: true
+
+# -------------------------------
+# 6️⃣ Additional arguments
+# -------------------------------
+additionalArguments:
+  - "--api.dashboard=true"
+
+# -------------------------------
+# 7️⃣ CRDs & RBAC
+# -------------------------------
+crds:
+  enabled: true
+
+rbac:
+  enabled: true

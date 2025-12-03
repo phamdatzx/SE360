@@ -1,0 +1,11 @@
+clusterName: se-360-vpc
+region: ap-southeast-1
+vpcId: vpc-0bafab0a6ac022e23
+
+serviceAccount:
+  create: false
+  name: aws-load-balancer-controller
+  namespace: kube-system
+
+ingressClass: none
+
