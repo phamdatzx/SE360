@@ -1,6 +1,6 @@
-clusterName: se-360-eks-primary
-region: ap-southeast-1
-vpcId: vpc-0bafab0a6ac022e23
+clusterName: se-360-eks-hot-site
+region: ap-southeast-2
+vpcId: vpc-0563c914d41dc227a
 
 serviceAccount:
   create: false

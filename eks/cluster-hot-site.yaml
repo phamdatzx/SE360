@@ -2,12 +2,12 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: se-360-eks-primary
-  region: ap-southeast-1
+  name: se-360-eks-hot-site
+  region: ap-southeast-2
 
 # Sử dụng VPC có sẵn
 vpc:
-  id: vpc-0bafab0a6ac022e23
+  id: vpc-0563c914d41dc227a
   clusterEndpoints:
     publicAccess: true
     privateAccess: true
@@ -15,19 +15,19 @@ vpc:
     public:
       # 3 public subnet cho Traefik/ALB
       public-subnet-1:
-        id: subnet-0e3c4f8b45c7107a3
+        id: subnet-0695792f899d93886
       public-subnet-2:
-        id: subnet-0e5863aee52b7157e
+        id: subnet-066d6622d593c26f2
       public-subnet-3:
-        id: subnet-0617a8c868edfcbe7
+        id: subnet-02fdbce0d88a67c41
     private:
       # 3 private subnet cho NodeGroup
       private-subnet-1:
-        id: subnet-0889db369bf7a3541
+        id: subnet-00358ccf055ceba51
       private-subnet-2:
-        id: subnet-04ade61690e86c5a4
+        id: subnet-052b4e056eeb84efe
       private-subnet-3:
-        id: subnet-0aed9cc5546e47cae
+        id: subnet-057dc5804d06344ab
 
 # IAM OIDC cho ALB/NLB controller
 iam:
@@ -42,9 +42,9 @@ nodeGroups:
     maxSize: 6
     privateNetworking: true
     availabilityZones:
-      - ap-southeast-1a
-      - ap-southeast-1b
-      - ap-southeast-1c
+      - ap-southeast-2a
+      - ap-southeast-2b
+      - ap-southeast-2c
 
 # chú thích:
 # - NodeGroup trong private subnet

@@ -43,23 +43,17 @@ providers:
 # -------------------------------
 dashboard:
   enabled: true
-  domain: "www.phamdatzx.id.vn"  # domain thực tế
-  auth:
-    basic:
-      users:
-        - "admin:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"  # admin / password example (htpasswd format)
+  domain: "phamdatzx.id.vn"  # domain thực tế
   # EntryPoint mặc định là websecure (443)
 entryPoints:
   web:
     address: ":80"
-  websecure:
-    address: ":443"
 
 # Expose Dashboard qua IngressRoute
 ingressRoute:
   dashboard:
     enabled: true
-    matchRule: Host(`www.phamdatzx.id.vn`)
+    matchRule: Host(`phamdatzx.id.vn`)
     entryPoints: ["web"]
 
 
